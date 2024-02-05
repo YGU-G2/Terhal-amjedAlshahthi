@@ -12,6 +12,7 @@ class Date extends StatelessWidget {
   final bool enabled;
   final Widget? prefixIcon;
   final List<String? Function(DateTime?)> validators;
+  final double? width;
 
   const Date({
     super.key,
@@ -21,12 +22,13 @@ class Date extends StatelessWidget {
     this.color,
     this.enabled = true,
     this.prefixIcon,
-    this.validators = const [],
+    this.validators = const [], this.width,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: width,
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
