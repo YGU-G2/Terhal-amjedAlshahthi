@@ -6,9 +6,9 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 // import 'package:terhal/controllers/theme_controller.dart';
 import 'package:terhal/form/controls/data.dart';
 import 'package:terhal/form/controls/password.dart';
-// import 'package:terhal/controllers/firebase_auth_controller.dart';
 import 'package:terhal/widgets/button.dart';
-// import 'package:terhal/widgets/loading.dart';
+import 'package:terhal/widgets/loading.dart';
+import 'package:terhal/controllers/firebase_auth_controller.dart';
 
 class SignInForm extends StatefulWidget {
   const SignInForm({
@@ -25,7 +25,8 @@ class SignInForm extends StatefulWidget {
 }
 
 class _SignInFormState extends State<SignInForm> {
-  // final FirebaseAuthController authController = Get.find();
+  final FirebaseAuthController authController =
+      Get.put(FirebaseAuthController());
   // final ThemeController themeController = Get.find();
 
   @override
@@ -61,10 +62,10 @@ class _SignInFormState extends State<SignInForm> {
 
   void _handleSignIn() async {
     if (widget.formKey.currentState!.saveAndValidate()) {
-      // await authController.signInWithEmailAndPassword(
-      //   widget.formKey.currentState!.value['email'],
-      //   widget.formKey.currentState!.value['password'],
-      // );
+      await authController.signInWithEmailAndPassword(
+        widget.formKey.currentState!.value['email'],
+        widget.formKey.currentState!.value['password'],
+      );
     }
   }
 
@@ -106,10 +107,14 @@ class _SignInFormState extends State<SignInForm> {
     );
   }
 
-  Button _buildSignInButton() {
-    return Button(
-      text: widget.appLocalizations!.login,
-      onPressed: _handleSignIn,
+  Obx _buildSignInButton() {
+    return Obx(
+      () => authController.isLoading.value
+          ? Loading.circle
+          : Button(
+              text: widget.appLocalizations!.login,
+              onPressed: _handleSignIn,
+            ),
     );
   }
 
@@ -118,10 +123,15 @@ class _SignInFormState extends State<SignInForm> {
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       height: Get.height * 0.05,
       child: MaterialButton(
+        color: Colors.black12,
+        focusElevation: 0,
+        hoverElevation: 0,
+        highlightElevation: 0,
+        elevation: 0,
         onPressed: () async {
-          // await authController
-          //     .signInWithGoogle()
-          //     .then((value) => Get.offAllNamed('home'));
+          await authController.signInWithGoogle().then(
+                (value) => Get.offAllNamed('home'),
+              );          
         },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18.0),

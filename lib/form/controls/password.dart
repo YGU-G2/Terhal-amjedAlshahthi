@@ -38,7 +38,7 @@ class _PasswordState extends State<Password> {
             offset: const Offset(0, 3),
           ),
         ],
-        borderRadius: BorderRadius.circular(20.0),
+        borderRadius: BorderRadius.circular(10.0),
       ),
       child: FormBuilderTextField(
         key: widget.key,
