@@ -19,8 +19,8 @@ class _SignUpPageState extends State<SignUpPage> {
     final appLocalizations = AppLocalizations.of(context);
 
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,        
+      body: ListView(
+        // mainAxisAlignment: MainAxisAlignment.center,        
         children: [
           Center(
             child: Column(

@@ -30,7 +30,7 @@ class TerhalApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      localizationsDelegates: [
+      localizationsDelegates: const [
         AppLocalizations.delegate, // this one was missing
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

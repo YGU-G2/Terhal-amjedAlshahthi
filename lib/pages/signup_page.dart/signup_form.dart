@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:terhal/controllers/firebase_auth_controller.dart';
 // import 'package:terhal/controllers/theme_controller.dart';
 import 'package:terhal/form/controls/data.dart';
 import 'package:terhal/form/controls/date.dart';
 import 'package:terhal/form/controls/password.dart';
 import 'package:terhal/form/controls/select.dart';
+import 'package:terhal/home.dart';
+import 'package:terhal/models/users.dart';
 import 'package:terhal/pages/signin_page/signin_page.dart';
+import 'package:terhal/utils/alert.dart';
 // import 'package:terhal/controllers/firebase_auth_controller.dart';
 import 'package:terhal/widgets/button.dart';
 // import 'package:terhal/widgets/loading.dart';
@@ -27,7 +33,7 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
-  // final FirebaseAuthController authController = Get.find();
+  final FirebaseAuthController authController = Get.find();
   // final ThemeController themeController = Get.find();
 
   int currentStep = 0;
@@ -74,10 +80,15 @@ class _SignUpFormState extends State<SignUpForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Select(
-            options: const ["Aden", "Haja"],
-            name: "password",
+            options: const ["Father", "Mother", "Brother", "Sister", "Friends"],
+            name: "travel_companion",
             label: widget.appLocalizations!.travelCompanion,
             prefixIcon: const Icon(Icons.travel_explore),
+            validators: [
+              FormBuilderValidators.required(
+                errorText: widget.appLocalizations!.notRequired,
+              ),
+            ],
           ),
           const SizedBox(
             height: 20,
@@ -88,9 +99,14 @@ class _SignUpFormState extends State<SignUpForm> {
               widget.appLocalizations!.asthma,
               widget.appLocalizations!.noCondition
             ],
-            name: "password",
-            label: "Travel Companion",
+            name: "health_and_safety",
+            label: "Health Safety",
             prefixIcon: const Icon(Icons.health_and_safety),
+            validators: [
+              FormBuilderValidators.required(
+                errorText: widget.appLocalizations!.notRequired,
+              ),
+            ],
           ),
           const SizedBox(
             height: 20,
@@ -103,14 +119,15 @@ class _SignUpFormState extends State<SignUpForm> {
               ),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Checkbox(
-                value: true,
-                onChanged: (value) {},
+            child: FormBuilderCheckbox(
+              validator: FormBuilderValidators.required(
+                errorText: widget.appLocalizations!.notRequired,
               ),
+              contentPadding: EdgeInsets.zero,
+              name: 'need_stroller',
               title: Text(
                 widget.appLocalizations!.needStroller,
+                style: TextStyle(fontSize: Get.width * 0.04),
               ),
             ),
           ),
@@ -120,7 +137,9 @@ class _SignUpFormState extends State<SignUpForm> {
           Button(
             width: Get.width,
             text: widget.appLocalizations!.createNewAccount,
-            onPressed: () {},
+            onPressed: () {
+              _handleSignUp();
+            },
           ),
           const SizedBox(
             height: 20,
@@ -158,14 +177,28 @@ class _SignUpFormState extends State<SignUpForm> {
             name: "password",
             label: widget.appLocalizations!.password,
             prefixIcon: const Icon(Icons.lock),
+            validators: [
+              FormBuilderValidators.required(
+                errorText: widget.appLocalizations!.notRequired,
+              ),
+              FormBuilderValidators.minLength(
+                8,
+                errorText: widget.appLocalizations!.passwordErrorText,
+              ),
+            ],
           ),
           const SizedBox(
             height: 20,
           ),
           Password(
-            name: "password",
+            name: "re_password",
             label: widget.appLocalizations!.confirmPassword,
             prefixIcon: const Icon(Icons.lock),
+            validators: [
+              FormBuilderValidators.required(
+                errorText: widget.appLocalizations!.notRequired,
+              ),
+            ],
           ),
           const SizedBox(
             height: 20,
@@ -177,6 +210,11 @@ class _SignUpFormState extends State<SignUpForm> {
                 label: widget.appLocalizations!.dateOfBirth,
                 prefixIcon: const Icon(Icons.calendar_today),
                 width: Get.width / 2.35,
+                validators: [
+                  FormBuilderValidators.required(
+                    errorText: widget.appLocalizations!.notRequired,
+                  ),
+                ],
               ),
               const SizedBox(
                 width: 10,
@@ -190,6 +228,11 @@ class _SignUpFormState extends State<SignUpForm> {
                 ],
                 prefixIcon: const Icon(Icons.person),
                 width: Get.width / 2.35,
+                validators: [
+                  FormBuilderValidators.required(
+                    errorText: widget.appLocalizations!.notRequired,
+                  ),
+                ],
               ),
             ],
           ),
@@ -241,19 +284,29 @@ class _SignUpFormState extends State<SignUpForm> {
           Row(
             children: [
               Data(
-                name: "firstName",
+                name: "first_name",
                 label: widget.appLocalizations!.firstName,
                 prefixIcon: const Icon(Icons.person),
                 width: Get.width / 2.35,
+                validators: [
+                  FormBuilderValidators.required(
+                    errorText: widget.appLocalizations!.notRequired,
+                  ),
+                ],
               ),
               const SizedBox(
                 width: 10,
               ),
               Data(
-                name: "lastName",
+                name: "last_name",
                 label: widget.appLocalizations!.lastName,
                 prefixIcon: const Icon(Icons.person),
                 width: Get.width / 2.35,
+                validators: [
+                  FormBuilderValidators.required(
+                    errorText: widget.appLocalizations!.notRequired,
+                  ),
+                ],
               ),
             ],
           ),
@@ -261,9 +314,18 @@ class _SignUpFormState extends State<SignUpForm> {
             height: 20,
           ),
           Data(
-            name: "userName",
+            name: "user_name",
             label: widget.appLocalizations!.username,
             prefixIcon: const Icon(Icons.person),
+            validators: [
+              FormBuilderValidators.required(
+                errorText: widget.appLocalizations!.notRequired,
+              ),
+              FormBuilderValidators.minLength(
+                6,
+                errorText: widget.appLocalizations!.userNameErrorText,
+              ),
+            ],
           ),
           const SizedBox(
             height: 20,
@@ -272,6 +334,14 @@ class _SignUpFormState extends State<SignUpForm> {
             name: "email",
             label: widget.appLocalizations!.email,
             prefixIcon: const Icon(Icons.person),
+            validators: [
+              FormBuilderValidators.required(
+                errorText: widget.appLocalizations!.notRequired,
+              ),
+              FormBuilderValidators.email(
+                errorText: widget.appLocalizations!.emailErrorText,
+              ),
+            ],
           ),
           const SizedBox(
             height: 20,
@@ -293,14 +363,38 @@ class _SignUpFormState extends State<SignUpForm> {
     );
   }
 
-  // void _handleSignIn() async {
-  //   if (widget.formKey.currentState!.saveAndValidate()) {
-  // await authController.signInWithEmailAndPassword(
-  //   widget.formKey.currentState!.value['email'],
-  //   widget.formKey.currentState!.value['password'],
-  // );
-  //   }
-  // }
+  void _handleSignUp() async {
+    if (widget.formKey.currentState!.saveAndValidate()) {
+      if (widget.formKey.currentState!.fields['re_password']!.value ==
+          widget.formKey.currentState!.fields['password']!.value) {
+        await authController
+            .signUpWithEmailAndPassword(
+          widget.formKey.currentState!.value['password'],
+          widget.formKey.currentState!.value['email'],
+          Users(
+            userFirstName: widget.formKey.currentState!.value['first_name'],
+            userLastName: widget.formKey.currentState!.value['last_name'],
+            userName: widget.formKey.currentState!.value['user_name'],
+            email: widget.formKey.currentState!.value['email'],
+            password: widget.formKey.currentState!.value['password'],
+            userDate: widget.formKey.currentState!.value['date'],
+            gender: widget.formKey.currentState!.value['gender'],
+            travelCompanion:
+                widget.formKey.currentState!.value['travel_companion'],
+            healthAndSafety:
+                widget.formKey.currentState!.value['health_and_safety'],
+            needStroller: widget.formKey.currentState!.value['need_stroller'],
+          ),
+        )
+            .then((value) {
+          Alert.snackbar("Success", widget.appLocalizations!.createdAccont);
+          Get.offAllNamed(HomePage.id);
+        });
+      } else {
+        Alert.snackbar("Error", widget.appLocalizations!.passwordsDoNotMatch);
+      }
+    }
+  }
 
   Row _buildSignInBtn(BuildContext context) {
     return Row(

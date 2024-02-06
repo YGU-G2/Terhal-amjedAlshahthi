@@ -27,10 +27,7 @@ migrate_working_dir/
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
-<<<<<<< HEAD
-=======
 .packages
->>>>>>> a3e275d (changes)
 .pub-cache/
 .pub/
 /build/

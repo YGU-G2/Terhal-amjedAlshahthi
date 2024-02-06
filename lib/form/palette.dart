@@ -13,7 +13,7 @@ class Palette {
     String? field,
     Color? fillColor,
   }) {
-    return InputDecoration(
+    return InputDecoration(      
       labelText: label,
       hintText: hintText,
       suffixIcon: suffixIcon,

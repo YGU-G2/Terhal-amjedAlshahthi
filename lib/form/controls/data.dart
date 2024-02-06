@@ -42,6 +42,7 @@ class Data extends StatelessWidget {
       child: FormBuilderTextField(
         key: key,
         name: name,
+        style: TextStyle(color: Colors.black),
         readOnly: readOnly,
         initialValue: initialValue,
         decoration: Palette.formFieldDecoration(
